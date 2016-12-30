@@ -6,6 +6,11 @@ $routers = [
         'action'     => 'test',
         'method'     => ['get', 'post'],
     ],
+    '/public/index' => [
+        'controller' => 'IndexController',
+        'action'     => 'index',
+        'method'     => ['get', 'post'],
+    ],
 ];
 
 // 注入DI

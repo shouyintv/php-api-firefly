@@ -27,24 +27,68 @@ return new \Phalcon\Config([
         ]
     ],
     'redis'            => array(
-        'User'    => array(
-            'host'     => '192.168.1.234',
-            'port'     => 6379,
-            'readHost' => '192.168.1.234',
-            'readPort' => 6379
-        ),
-        'Cache'   => array(
-            'host' => '192.168.1.234',
-            'port' => 6379,
-        ),
-        'Session' => array(
-            'host' => '192.168.1.234',
-            'port' => 6379,
-        ),
-        'Storage' => array(
-            'host' => '192.168.1.234',
-            'port' => 6379,
-        )
+        'User'    => [
+            'host'       => '/dev/shm/redis_user.sock',
+            'port'       => 0,
+            'auth'       => '',
+            'readWeight' => 2,
+            'reads'      => [
+                [
+                    'host' => '/dev/shm/redis_user_read.sock',
+                    'port' => 0,
+                    'auth' => '',
+                ],
+            ],
+        ],
+        'Storage' => [
+            'host'       => '/dev/shm/redis_storage.sock',
+            'port'       => 0,
+            'auth'       => '',
+            'readWeight' => 2,
+            'reads'      => [
+                [
+                    'host' => '/dev/shm/redis_storage_read.sock',
+                    'port' => 0,
+                    'auth' => '',
+                ],
+            ],
+        ],
+        'Cache'   => [
+            'host' => '/dev/shm/redis_cache.sock',
+            'port' => 0,
+            'auth' => '',
+        ],
+        'Session' => [
+            'host' => '/dev/shm/redis_session.sock',
+            'port' => 0,
+            'auth' => '',
+        ],
+        'Task'    => [
+            'host'       => '/dev/shm/redis_task.sock',
+            'port'       => 0,
+            'auth'       => '',
+            'readWeight' => 2,
+            'reads'      => [
+                [
+                    'host' => '/dev/shm/redis_task_read.sock',
+                    'port' => 0,
+                    'auth' => '',
+                ],
+            ],
+        ],
+        'Active'  => [
+            'host'       => '/dev/shm/redis_active.sock',
+            'port'       => 0,
+            'auth'       => '',
+            'readWeight' => 2,
+            'reads'      => [
+                [
+                    'host' => '/dev/shm/redis_active_read.sock',
+                    'port' => 0,
+                    'auth' => '',
+                ],
+            ],
+        ]
     ),
     // 表结构缓存设置
     'DATA_CACHE_META'  => [

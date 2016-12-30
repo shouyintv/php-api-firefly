@@ -9,8 +9,15 @@
  * @logs   :
  *
  */
+use Core\ControllerBase;
+
 class IndexController extends ControllerBase
 {
+    public function index()
+    {
+        echo "Hello Hari";
+        die;
+    }
     public function test()
     {
         echo "Hello Hari";
