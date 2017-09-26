@@ -22,6 +22,7 @@ use Core\Log;
 define('APP_NAME', 'api_firefly'); // 设置项目名称,给redis加前缀
 define('APP_ENV', getenv('SY_APPLICATION_ENV')); // 环境变量［local,prerelease,master］
 define('APP_PATH', __DIR__ . '/../app');
+define('BASE_PATH', __DIR__ . '/..');
 
 function is_online()
 {
@@ -70,6 +71,24 @@ function safe_filter($str)
     return $filter;
 }
 
+function getComposerNameSpace()
+{
+    $psr4map = include BASE_PATH . '/vendor/composer/autoload_psr4.php';
+    $temp1 = [];
+    foreach ($psr4map as $ns => $path) {
+        $temp1[substr($ns, 0, -1)] = $path;
+    }
+    $nssMap = include BASE_PATH . '/vendor/composer/autoload_namespaces.php';
+    $temp2 = [];
+    foreach ($nssMap as $ns => $path) {
+        $ns = substr($ns, 0, -1);
+        $temp2[$ns] = $path[0] . '/' . str_replace('\\', '/', $ns);
+    }
+    $loader = new \Phalcon\Loader();
+    $loader->registerNamespaces(array_merge($temp2, $temp1));
+    $loader->register();
+}
+
 if ($_GET) {
     $_GET = safe_filter($_GET);
 }
@@ -88,6 +107,7 @@ $project = 'public';
 $controllerDir = APP_PATH . '/controllers/public/';
 $uri = $_SERVER['REQUEST_URI'];
 
+// 路由分组
 // 可以被公共访问
 if (strpos($uri, 'public') === 1) {
     $project = 'public';
@@ -106,6 +126,7 @@ if (strpos($uri, 'auth') === 1) {
 }
 
 // loader
+getComposerNameSpace();
 $loader = new \Phalcon\Loader();
 
 // 根据命名空间前缀加载
@@ -114,6 +135,16 @@ $loader->registerNamespaces([
     'Model'  => APP_PATH . '/library/model/',
     'Vendor' => APP_PATH . '/library/vendor/',
 ]);
+
+/**
+ * Register Files, composer autoloader
+ */
+$autoloadFiles = BASE_PATH . '/vendor/composer/autoload_files.php';
+if (file_exists($autoloadFiles)) {
+    $filesMap = include $autoloadFiles;
+    $filesInc = array_values($filesMap);
+    $loader->registerFiles($filesInc);
+}
 
 $loader->registerDirs([
     $controllerDir,
@@ -128,8 +159,7 @@ if (file_exists(APP_PATH . '/config/config.' . APP_ENV . '.php')) {
     $di->set('config', $config, true);
 }
 
-define('APP_LOG', $di->getConfig()->logPath);
-
+// request
 class Request extends Phalcon\Http\Request
 {
     public function getClientAddress($trustForwardedHeader = null)
@@ -157,7 +187,6 @@ class Request extends Phalcon\Http\Request
         return $ip;
     }
 }
-
 $di->set('request', function () {
     return new Request;
 });
@@ -225,6 +254,8 @@ $app->notFound(function () use ($app) {
     echo 'This is crazy, but this page was not found!';
     exit;
 });
+
+define('APP_LOG', $di->getConfig()->logPath);
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($app, $di) {
     $app->response->setContentType('application/json', 'UTF-8')->sendHeaders();

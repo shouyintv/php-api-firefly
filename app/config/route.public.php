@@ -4,12 +4,12 @@ $routers = [
     '/public/test' => [
         'controller' => 'IndexController',
         'action'     => 'test',
-        'method'     => ['get', 'post'],
+        'method'     => ['get'],
     ],
     '/public/index' => [
         'controller' => 'IndexController',
         'action'     => 'index',
-        'method'     => ['get', 'post'],
+        'method'     => ['get'],
     ],
 ];
 
