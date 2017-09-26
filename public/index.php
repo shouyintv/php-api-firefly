@@ -258,7 +258,7 @@ $app->notFound(function () use ($app) {
 define('APP_LOG', $di->getConfig()->logPath);
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($app, $di) {
-    $app->response->setContentType('application/json', 'UTF-8')->sendHeaders();
+    $app->response->setContentType('application/json')->sendHeaders();
     $errorMsg = "Error:{$errno} {$errstr} File>>{$errfile}:{$errline}";
     $err = is_online() ? '系统错误' : $errorMsg;
     if (is_online()) {
@@ -276,7 +276,7 @@ set_exception_handler(function (Exception $e) use ($app) {
         $e->getLine()
     );
 
-    $app->response->setContentType('application/json', 'UTF-8')->sendHeaders();
+    $app->response->setContentType('application/json')->sendHeaders();
 
     if (is_online()) {
         Log::error($logMsg);
@@ -290,7 +290,7 @@ set_exception_handler(function (Exception $e) use ($app) {
 });
 
 register_shutdown_function(function () use ($app, $di) {
-    $app->response->setContentType('application/json', 'UTF-8')->sendHeaders();
+    $app->response->setContentType('application/json')->sendHeaders();
     $last_error = error_get_last();
 
     $errorMsg = '致命错误：' . $last_error['message'] . ' ' . $last_error['file'] . ' ' . $last_error['line'];
